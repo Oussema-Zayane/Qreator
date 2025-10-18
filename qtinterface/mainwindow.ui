@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>978</width>
+    <height>805</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Section Client Interface Unifiée</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+}
+QWidget {
+    background-color: #f8f9fa;
+    font-size: 10pt;
+    color: #2c3e50;
+}
+QLabel {
+    color: #2c3e50;
+    font-weight: bold;
+}
+QGroupBox {
+    background-color: white;
+    border: 2px solid #A7C7E7;
+    border-radius: 8px;
+    margin-top: 10px;
+    padding: 10px;
+    color: #2c3e50;
+    font-weight: bold;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 5px 10px;
+    background-color: #A7C7E7;
+    color: white;
+    border-radius: 4px;
+}
+QPushButton {
+    background-color: #A7C7E7;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+QPushButton:hover {
+    background-color: #95B8E7;
+}
+QLineEdit, QTextEdit, QComboBox, QSpinBox {
+    border: 2px solid #A7C7E7;
+    border-radius: 5px;
+    padding: 6px;
+    background-color: white;
+    font-size: 10pt;
+    color: #2c3e50;
+}
+QLineEdit:focus, QTextEdit:focus {
+    border-color: #A7C7E7;
+    background-color: #F0F8FF;
+}
+QTableWidget {
+    background-color: white;
+    border: 2px solid #A7C7E7;
+    border-radius: 6px;
+    gridline-color: #E1F5FE;
+    color: #2c3e50;
+}
+QHeaderView::section {
+    background-color: #A7C7E7;
+    color: white;
+    padding: 8px;
+    border: none;
+    font-weight: bold;
+}
+QSplitter::handle {
+    background-color: #A7C7E7;
+    margin: 2px;
+}
+QCheckBox {
+    color: #2c3e50;
+}
+QTextBrowser {
+    color: #2c3e50;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="leftWidget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Informations Client</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Nom/Prénom:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="clientNameEdit"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Email:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="clientEmailEdit"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Téléphone:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="clientPhoneEdit"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="addClientBtn">
+            <property name="text">
+             <string>Ajouter Client</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="editClientBtn">
+            <property name="text">
+             <string>Modifier Client</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="deleteClientBtn">
+            <property name="text">
+             <string>Supprimer Client</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="exportPdfBtn">
+            <property name="text">
+             <string>Exporter PDF</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Recherche:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="searchLineEdit"/>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Trier par:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="sortComboBox">
+            <item>
+             <property name="text">
+              <string>Nom/Prénom</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Email</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Téléphone</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Date d'ajout</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Statut</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="clientTable">
+          <property name="styleSheet">
+           <string notr="true">QTableWidget {
+    background-color: white;
+    border: 2px solid #A7C7E7;
+    border-radius: 6px;
+    gridline-color: #E1F5FE;
+}
+QHeaderView::section {
+    background-color: #A7C7E7;
+    color: white;
+    padding: 8px;
+    border: none;
+    font-weight: bold;
+}</string>
+          </property>
+          <column>
+           <property name="text">
+            <string>Nom/Prénom</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Email</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Téléphone</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Date d'ajout</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Statut</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="totalClientsLabel">
+            <property name="text">
+             <string>Total clients: 0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="activeClientsLabel">
+            <property name="text">
+             <string>Clients actifs: 0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="newClientsLabel">
+            <property name="text">
+             <string>Nouveaux ce mois: 0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QSplitter" name="splitter_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="QWidget" name="chatWidget" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Support Client - Chatbot</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">font-size: 14pt; font-weight: bold; color: #2c3e50;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextBrowser" name="chatHistory">
+           <property name="styleSheet">
+            <string notr="true">QTextBrowser {
+    background-color: #E8F5E9;
+    border: 2px solid #A5D6A7;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 10pt;
+    color: #2c3e50;
+}</string>
+           </property>
+           <property name="html">
+            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Support:&lt;/span&gt; Bonjour! Comment puis-je vous aider aujourd'hui?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLineEdit" name="chatInput">
+             <property name="placeholderText">
+              <string>Tapez votre message ici...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="sendMessageBtn">
+             <property name="text">
+              <string>Envoyer</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Réponses rapides:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QPushButton" name="quickReply1">
+             <property name="text">
+              <string>Problème de connexion</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="quickReply2">
+             <property name="text">
+              <string>Question facturation</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="quickReply3">
+             <property name="text">
+              <string>Support technique</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="quickReply4">
+             <property name="text">
+              <string>Demande information</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="emailWidget" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Campagne Email</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">font-size: 14pt; font-weight: bold; color: #2c3e50;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>Nombre de clients:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="clientCountSpinBox">
+             <property name="value">
+              <number>150</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="activeClientsOnlyCheckBox">
+             <property name="text">
+              <string>Clients actifs seulement</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>Sujet:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="emailSubjectLineEdit">
+             <property name="placeholderText">
+              <string>Sujet de l'email...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Contenu:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="emailContentTextEdit">
+           <property name="styleSheet">
+            <string notr="true">QTextEdit {
+    background-color: #F0F8FF;
+    border: 2px solid #A7C7E7;
+    border-radius: 8px;
+    padding: 8px;
+    color: #2c3e50;
+}</string>
+           </property>
+           <property name="placeholderText">
+            <string>Rédiger votre message ici...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <item>
+            <widget class="QPushButton" name="sendEmailBtn">
+             <property name="text">
+              <string>Envoyer l'email</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="saveTemplateBtn">
+             <property name="text">
+              <string>Sauvegarder modèle</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="loadTemplateBtn">
+             <property name="text">
+              <string>Charger modèle</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
