@@ -1,0 +1,15 @@
+# ninja log v6
+10	754	7807706353523704	esprit_horizon_autogen/timestamp	6b3cef31bb3fe3a9
+10	754	7807706353523704	esprit_horizon_autogen/mocs_compilation.cpp	6b3cef31bb3fe3a9
+10	754	7807706353523704	C:/Users/VORTEX/Documents/esprit_horizon/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/esprit_horizon_autogen/timestamp	6b3cef31bb3fe3a9
+10	754	7807706353523704	C:/Users/VORTEX/Documents/esprit_horizon/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/esprit_horizon_autogen/mocs_compilation.cpp	6b3cef31bb3fe3a9
+760	3401	7807706354471121	CMakeFiles/esprit_horizon.dir/esprit_horizon_autogen/mocs_compilation.cpp.obj	c25ae6b79f647cae
+763	3419	7807706354506229	CMakeFiles/esprit_horizon.dir/main.cpp.obj	6d21d71b6b212940
+767	3447	7807706354516300	CMakeFiles/esprit_horizon.dir/mainwindow.cpp.obj	80802a7317bf8b39
+3447	3670	7807706381343556	esprit_horizon.exe	1d07bcbd5ae9ace4
+16	194	7807713661986915	esprit_horizon_autogen/timestamp	6b3cef31bb3fe3a9
+16	194	7807713661986915	esprit_horizon_autogen/mocs_compilation.cpp	6b3cef31bb3fe3a9
+16	194	7807713661986915	C:/Users/VORTEX/Documents/esprit_horizon/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/esprit_horizon_autogen/timestamp	6b3cef31bb3fe3a9
+16	194	7807713661986915	C:/Users/VORTEX/Documents/esprit_horizon/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/esprit_horizon_autogen/mocs_compilation.cpp	6b3cef31bb3fe3a9
+195	2778	7807713663766353	CMakeFiles/esprit_horizon.dir/mainwindow.cpp.obj	80802a7317bf8b39
+2778	2999	7807713689601468	esprit_horizon.exe	1d07bcbd5ae9ace4
