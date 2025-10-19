@@ -1,0 +1,5 @@
+ID;Nom;Prénom;Email;Téléphone;Rôle;Horaire;Genre
+1;Ben Ali;Yassine;yassine.montage@studio.tn;+216 20 111 001;Monteur;Matin;Homme
+2;Ayari;Sarra;sarra.montage@studio.tn;+216 20 111 002;Monteur;Soir;Femme
+3;Zitoun;Amina;amina.graph@studio.tn;+216 20 222 001;Graphiste;Matin;Femme
+4;Haddad;Amine;amine.redac@studio.tn;+216 20 333 002;Rédacteurs;Soir;Homme
