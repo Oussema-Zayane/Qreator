@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Gestion des Clients - CRUD Complet</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Informations Client</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Nom/Prénom:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="clientNameEdit">
+         <property name="placeholderText">
+          <string>Ex: Jean Dupont (min. 2 caractères)</string>
+         </property>
+         <property name="toolTip">
+          <string>Lettres, espaces, apostrophes et tirets uniquement</string>
+         </property>
+         <property name="maxLength">
+          <number>50</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Email:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="clientEmailEdit">
+         <property name="placeholderText">
+          <string>Ex: jean.dupont@email.com</string>
+         </property>
+         <property name="toolTip">
+          <string>Format d'email valide requis</string>
+         </property>
+         <property name="maxLength">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Téléphone:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="clientPhoneEdit">
+         <property name="placeholderText">
+          <string>Ex: 01 23 45 67 89</string>
+         </property>
+         <property name="toolTip">
+          <string>Format français: 10 chiffres commençant par 0</string>
+         </property>
+         <property name="maxLength">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>ID Client Sélectionné:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="selectedClientIdLabel">
+           <property name="text">
+            <string>Aucun</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">font-weight: bold; color: #2E86AB;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="clearFormBtn">
+           <property name="text">
+            <string>Nouveau Client</string>
+           </property>
+           <property name="toolTip">
+            <string>Vider le formulaire pour ajouter un nouveau client</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #6C757D;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+QPushButton:hover {
+    background-color: #5A6268;
+}
+QPushButton:pressed {
+    background-color: #545B62;
+}</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="addClientBtn">
+        <property name="text">
+         <string>➕ Ajouter Client</string>
+        </property>
+        <property name="toolTip">
+         <string>Ajouter un nouveau client à la base de données</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+    background-color: #28A745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+}
+QPushButton:hover {
+    background-color: #218838;
+}
+QPushButton:pressed {
+    background-color: #1E7E34;
+}
+QPushButton:disabled {
+    background-color: #6C757D;
+    color: #CED4DA;
+}</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="editClientBtn">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>✏️ Modifier Client</string>
+        </property>
+        <property name="toolTip">
+         <string>Modifier le client sélectionné (doit être sélectionné dans le tableau)</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+    background-color: #FFC107;
+    color: #212529;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+}
+QPushButton:hover {
+    background-color: #E0A800;
+}
+QPushButton:pressed {
+    background-color: #D39E00;
+}
+QPushButton:disabled {
+    background-color: #6C757D;
+    color: #CED4DA;
+}</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="deleteClientBtn">
+        <property name="text">
+         <string>🗑️ Supprimer Client</string>
+        </property>
+        <property name="toolTip">
+         <string>Supprimer le client sélectionné (doit être sélectionné dans le tableau)</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+    background-color: #DC3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+}
+QPushButton:hover {
+    background-color: #C82333;
+}
+QPushButton:pressed {
+    background-color: #BD2130;
+}</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>🔍 Recherche:</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font-weight: bold; font-size: 12px;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="searchLineEdit">
+        <property name="placeholderText">
+         <string>Rechercher par nom, email ou téléphone...</string>
+        </property>
+        <property name="toolTip">
+         <string>Recherche en temps réel dans les clients</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLineEdit {
+    padding: 8px;
+    border: 2px solid #DEE2E6;
+    border-radius: 4px;
+    font-size: 12px;
+}
+QLineEdit:focus {
+    border-color: #2E86AB;
+    background-color: #F8F9FA;
+}</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="refreshTableBtn">
+        <property name="text">
+         <string>🔄 Actualiser</string>
+        </property>
+        <property name="toolTip">
+         <string>Actualiser la liste des clients</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+    background-color: #2E86AB;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 11px;
+}
+QPushButton:hover {
+    background-color: #266D8F;
+}
+QPushButton:pressed {
+    background-color: #1F5A7A;
+}</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTableWidget" name="clientTable">
+      <property name="styleSheet">
+       <string notr="true">QTableWidget {
+    background-color: white;
+    alternate-background-color: #F8F9FA;
+    selection-background-color: #2E86AB;
+    selection-color: white;
+    gridline-color: #DEE2E6;
+    border: 1px solid #DEE2E6;
+    border-radius: 4px;
+}
+QTableWidget::item {
+    padding: 8px;
+    border-bottom: 1px solid #DEE2E6;
+}
+QTableWidget::item:selected {
+    background-color: #2E86AB;
+    color: white;
+}
+QHeaderView::section {
+    background-color: #343A40;
+    color: white;
+    padding: 10px;
+    border: none;
+    font-weight: bold;
+    font-size: 11px;
+}</string>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <property name="showGrid">
+       <bool>true</bool>
+      </property>
+      <property name="gridStyle">
+       <enum>Qt::SolidLine</enum>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <attribute name="horizontalHeaderHighlightSections">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="horizontalHeaderMinimumSectionSize">
+       <number>40</number>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>ID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Nom/Prénom</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Email</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Téléphone</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Date d'ajout</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Statut</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
