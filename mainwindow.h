@@ -15,17 +15,14 @@
 #include "emailsmtpmanager.h"
 #include <QProgressBar>
 #include "chatbotdialog.h"
-#include <QProgressBar>  // Pour les barres de progression
+#include <QProgressBar>
 #include <QLabel>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QConicalGradient>
-#include "alerteretarddialog.h" // NOUVEAU
-#include "historiquedialog.h"   // NOUVEAU
-
-
-
-
+#include "alerteretarddialog.h" 
+#include "historiquedialog.h" 
+#include <QVector> // Ajout pour QVector
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -42,17 +39,15 @@ public:
     ~MainWindow();
 
 private slots:
-        void on_toggleStatutBtn_clicked();
+    void on_toggleStatutBtn_clicked();
+    
     // ============================================================================
-    // NAVIGATION
+    // NAVIGATION (Correction: Les slots togled sont gérés dans le constructeur)
+    // Les slots 'on_..._clicked' pour la navigation ne sont plus utilisés.
     // ============================================================================
-    void on_clientsBtn_clicked();
-    void on_employesBtn_clicked();
-    void on_projetsBtn_clicked();
-    void on_financesBtn_clicked();
-    void on_equipementsBtn_clicked();
-    void on_mailingBtn_clicked();
-
+    // Les slots clientsBtn_clicked, employesBtn_clicked, etc. ont été supprimés
+    // car le changement d'index se fait par un Lambda dans le connect() du constructeur.
+    
     // ============================================================================
     // GESTION CLIENTS
     // ============================================================================
@@ -65,6 +60,10 @@ private slots:
     void on_refreshTableBtn_clicked();
     void on_activeClientsOnly_toggled(bool checked);
     void on_exportPdfBtn_clicked();
+    
+    // NOUVEAUX SLOTS D'ACTIONS (Ajoutés pour les menu Actions)
+    void on_actionAlerteRetard_triggered(); // Doit être ici pour les actions de menu
+    void on_actionHistorique_triggered();  // Doit être ici pour les actions de menu
 
     // ============================================================================
     // GESTION EMPLOYÉS
@@ -130,24 +129,21 @@ private slots:
     void onEnvoiTermine();
     void onErreurEmail(const QString &message);
     void on_envoyerEmailClientBtn_clicked();
-    void onProgression(int pourcentage);  // UN SEUL paramètre !
+    void onProgression(int pourcentage); 
 
-
-
-
-    void on_chatbotBtn_clicked();  // AJOUTEZ CETTE LIGNE
-
-
-
+    void on_chatbotBtn_clicked(); 
+    
 
 private:
     Ui::MainWindow *ui;
 
-    // Variables pour stocker les IDs sélectionnés
+    // ============================================================================
+    // VARIABLES D'ÉTAT (current IDs)
+    // ============================================================================
     int currentClientId;
     int currentEmployeId;
     int currentProjetId;
-    int currentFinanceId;
+    int currentFinanceId; // Nécessaire pour les opérations de modification/suppression
     int currentEquipementId;
     int currentMailingId;
 
@@ -200,7 +196,7 @@ private:
     // ============================================================================
     // MÉTHODES UTILITAIRES
     // ============================================================================
-    void showValidationError(const QString& message);
+    void showValidationError(const QString& message); // Déclaration de la fonction d'affichage d'erreur
     QString genererMessageAutomatique(const QString &nomClient, const QString &typeMessage = "standard");
     QString corrigerEmail(const QString &email);
     bool validerEmail(const QString &email);
@@ -213,13 +209,16 @@ private:
     QStringListModel *completionModel;
     QStringList motsCourants;
     void envoyerEmailClient(const QString &nomPrenom, const QString &email);
-
     QString genererMessageReel(const QString &prenom);
 
+    // ============================================================================
+    // CHATBOT
+    // ============================================================================
+    ChatbotDialog *chatbotDialog; 
 
-
-    ChatbotDialog *chatbotDialog;  // AJOUTEZ CETTE LIGNE
-
+    // ============================================================================
+    // MÉTHODES PRIVÉES - AMÉLIORATIONS GRAPHIQUES & STATISTIQUES
+    // ============================================================================
     void creerStatistiquesVisuelles();
     void mettreAJourStatistiquesVisuelles();
     void mettreAJourStatutVisuel();
@@ -230,21 +229,12 @@ private:
     void creerIndicateursCirculaires();
     void mettreAJourIndicateursCirculaires();
     void basculerStatutClient();
-    // ============================================================================
-    // MÉTHODES PRIVÉES - AMÉLIORATIONS GRAPHIQUES
-    // ============================================================================
-    void ajouterBoutonStatut();  // AJOUTER CETTE DÉCLARATION
+    
+    void ajouterBoutonStatut(); // AJOUTÉ : permet d'ajouter le bouton statut dans l'UI
     void mettreAJourBoutonStatut();
-    // ============================================================================
-    // ADD THESE TWO LINES - DÉCLARATIONS DES MÉTHODES CIRCULAIRES
-    // ============================================================================
+    
     void creerStatistiquesCirculaires();
     void mettreAJourStatistiquesCirculaires();
-
-
-
-
-
 };
 
 #endif // MAINWINDOW_H
