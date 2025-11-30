@@ -20,7 +20,8 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QConicalGradient>
-
+#include "alerteretarddialog.h" // NOUVEAU
+#include "historiquedialog.h"   // NOUVEAU
 
 
 
