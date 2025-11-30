@@ -1,3 +1,4 @@
+// main.cpp (Correction de l'appel de fonction)
 #include "mainwindow.h"
 #include "connection.h"
 #include <QApplication>
@@ -9,7 +10,9 @@ int main(int argc, char *argv[])
 
     // Établir la connexion à la BD
     Connection& conn = Connection::getInstance();
-    bool test = conn.createConnection();
+    
+    // CORRECTION : Utiliser createconnect() pour correspondre au .cpp final
+    bool test = conn.createconnect(); 
 
     if(test) {
         QMessageBox::information(nullptr, "Succès",
