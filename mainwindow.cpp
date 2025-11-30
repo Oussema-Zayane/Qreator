@@ -5,6 +5,9 @@
 #include "employe.h"
 #include "projet.h"
 #include "finance.h"
+#include "alerteretarddialog.h"
+#include "historiquedialog.h"
+// ... autres includes
 #include <QMessageBox>
 #include <QSqlQueryModel>
 #include <QDateTime>
@@ -1494,7 +1497,20 @@ void MainWindow::on_refreshFinanceTableBtn_clicked()
 {
     refreshFinanceTable();
 }
+void MainWindow::on_actionAlerteRetard_triggered()
+{
+    // On crée une instance de la boîte de dialogue Alerte
+    AlerteRetardDialog *alerteDialog = new AlerteRetardDialog(this);
+    // On l'affiche de manière modale (bloque la fenêtre principale)
+    alerteDialog->exec(); 
+    // Ou alerteDialog->show() si vous préférez un affichage non modal
+}
 
+void MainWindow::on_actionHistorique_triggered()
+{
+    HistoriqueDialog *historiqueDialog = new HistoriqueDialog(this);
+    historiqueDialog->exec();
+}
 
 // ============================================================================
 // GESTION equipement
