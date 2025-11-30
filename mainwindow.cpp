@@ -1246,12 +1246,95 @@ void MainWindow::on_refreshProjetTableBtn_clicked()
 // GESTION FINANCES
 // ============================================================================
 
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <QMessageBox>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QSqlDatabase>
+#include <QDebug>
+#include <QDate>
+#include <QSqlQueryModel>
+// Assurez-vous d'inclure les headers des Dialogues et de la classe Finance
+#include "alerteretarddialog.h" 
+#include "historiquedialog.h"
+#include "finance.h" 
+
+// Définition de la variable globale ou membre
+// int currentFinanceId = -1; // Doit être déclaré dans mainwindow.h
+
+// =====================================================================
+// CONSTRUCTEUR (OÙ LES CONNEXIONS MANUELLES DOIVENT ÊTRE PLACÉES)
+// =====================================================================
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+
+    // Initialisation
+    currentFinanceId = -1;
+    // Désactiver le bouton modifier au démarrage
+    ui->editFinanceBtn->setEnabled(false); 
+
+    // =========================================================
+    // CONNEXIONS MANUELLES DE LA BARRE LATÉRALE
+    // (Les connexions on_..._clicked sont automatiques par convention)
+    // =========================================================
+
+    // Page 0 : Clients
+    connect(ui->clientsBtn, &QPushButton::toggled, this, [=](bool checked) {
+        if (checked) {
+            ui->stackedWidget->setCurrentIndex(0); 
+        }
+    });
+
+    // Page 1 : Employés
+    connect(ui->employesBtn, &QPushButton::toggled, this, [=](bool checked) {
+        if (checked) {
+            ui->stackedWidget->setCurrentIndex(1); 
+        }
+    });
+
+    // Page 2 : Projets
+    connect(ui->projetsBtn, &QPushButton::toggled, this, [=](bool checked) {
+        if (checked) {
+            ui->stackedWidget->setCurrentIndex(2); 
+        }
+    });
+    
+    // Page 3 : Finances - C'est ici que l'on charge les données au changement de page
+    connect(ui->financesBtn, &QPushButton::toggled, this, [=](bool checked) {
+        if (checked) {
+            ui->stackedWidget->setCurrentIndex(3); 
+            refreshFinanceTable(); // Rafraîchir lorsque l'utilisateur arrive sur la page
+        }
+    });
+    
+    // ... Ajoutez les connexions pour les autres boutons (equipementsBtn, mailingBtn) ...
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+// =====================================================================
+// FONCTIONS DE GESTION DE LA FENÊTRE PRINCIPALE
+// =====================================================================
+
+/**
+ * @brief Rafraîchit le QTableWidget des opérations financières.
+ * CORRECTION : Utilise 7 colonnes (pour cohérence avec la BDD et la recherche).
+ */
 void MainWindow::refreshFinanceTable()
 {
     qDebug() << "🔄 Rafraîchissement du tableau finances...";
 
     Finance f;
-    QSqlQueryModel *model = f.afficher();
+    // Assurez-vous que f.afficher() retourne les 7 colonnes : ID, Type, Montant, Date, Description, Projet ID, Statut
+    QSqlQueryModel *model = f.afficher(); 
 
     if (model) {
         qDebug() << "Modèle chargé, lignes:" << model->rowCount();
@@ -1259,12 +1342,14 @@ void MainWindow::refreshFinanceTable()
         ui->financeTable->setRowCount(0);
 
         QStringList headers;
-        headers << "ID" << "Type" << "Montant" << "Date" << "Description" << "Catégorie";
-        ui->financeTable->setColumnCount(headers.size());
+        headers << "ID" << "Type" << "Montant" << "Date" << "Description" << "Projet ID" << "Statut";
+        
+        ui->financeTable->setColumnCount(headers.size()); 
         ui->financeTable->setHorizontalHeaderLabels(headers);
 
         for (int row = 0; row < model->rowCount(); ++row) {
             ui->financeTable->insertRow(row);
+            // Assurez-vous que le modèle retourne 7 colonnes ou ajustez model->columnCount()
             for (int col = 0; col < model->columnCount(); ++col) {
                 QTableWidgetItem *item = new QTableWidgetItem(
                     model->data(model->index(row, col)).toString());
@@ -1273,14 +1358,19 @@ void MainWindow::refreshFinanceTable()
         }
 
         ui->financeTable->resizeColumnsToContents();
-        delete model;
+        // Le modèle est copié par QSqlQueryModel, il est sécuritaire de le supprimer si vous l'avez créé dynamiquement
+        // Cependant, si f.afficher() retourne un pointeur, il faut s'assurer qu'il soit bien détruit.
+        delete model; 
 
         qDebug() << "✅ Tableau finances rafraîchi -" << ui->financeTable->rowCount() << "lignes affichées";
     } else {
-        qDebug() << "❌ Erreur lors du chargement du modèle";
+        qDebug() << "❌ Erreur lors du chargement du modèle. Erreur SQL:" << QSqlDatabase::database().lastError().text();
     }
 }
 
+/**
+ * @brief Vide le formulaire et réinitialise l'ID de l'opération sélectionnée.
+ */
 void MainWindow::clearFinanceForm()
 {
     ui->financeTypeEdit->clear();
@@ -1289,8 +1379,14 @@ void MainWindow::clearFinanceForm()
     ui->financeProjetIdEdit->clear();
     ui->selectedFinanceIdLabel->clear();
     currentFinanceId = -1;
+    // Réactiver le bouton Ajouter et désactiver le bouton Modifier
+    ui->editFinanceBtn->setEnabled(false);
+    ui->addFinanceBtn->setEnabled(true);
 }
 
+/**
+ * @brief Valide les champs du formulaire financier.
+ */
 bool MainWindow::validateFinanceForm()
 {
     QString type = ui->financeTypeEdit->text().trimmed();
@@ -1300,6 +1396,7 @@ bool MainWindow::validateFinanceForm()
 
     // Vérification des champs vides
     if(type.isEmpty() || montant.isEmpty() || description.isEmpty() || projetId.isEmpty()) {
+        // showValidationError doit être défini dans mainwindow.h
         showValidationError("Tous les champs doivent être remplis");
         return false;
     }
@@ -1308,7 +1405,7 @@ bool MainWindow::validateFinanceForm()
     bool montantOk;
     double montantValue = montant.toDouble(&montantOk);
     if(!montantOk || montantValue <= 0) {
-        showValidationError("Le montant doit être un nombre positif");
+        showValidationError("Le montant doit être un nombre positif (format 123.45)");
         ui->financeMontantEdit->setFocus();
         return false;
     }
@@ -1317,7 +1414,7 @@ bool MainWindow::validateFinanceForm()
     bool projetOk;
     int projetIdValue = projetId.toInt(&projetOk);
     if(!projetOk || projetIdValue <= 0) {
-        showValidationError("L'ID projet doit être un nombre positif");
+        showValidationError("L'ID projet doit être un nombre entier positif");
         ui->financeProjetIdEdit->setFocus();
         return false;
     }
@@ -1325,42 +1422,47 @@ bool MainWindow::validateFinanceForm()
     return true;
 }
 
+// =====================================================================
+// SLOTS D'ACTIONS (on_..._clicked)
+// =====================================================================
+
+/**
+ * @brief Ajoute une nouvelle opération financière.
+ * CORRECTION : Utilise la fonction validateFinanceForm() complète.
+ */
 void MainWindow::on_addFinanceBtn_clicked()
 {
-    // RÉCUPÉRER LES VRAIES VALEURS DU FORMULAIRE
-    QString type = ui->financeTypeEdit->text();
-    QString description = ui->financeDescriptionEdit->text();
-    double montant = ui->financeMontantEdit->text().toDouble();
-    QString projetId = ui->financeProjetIdEdit->text();
-
-    // Validation
-    if (type.isEmpty() || description.isEmpty() || montant <= 0) {
-        QMessageBox::warning(this, "Erreur", "Veuillez remplir tous les champs correctement");
-        return;
+    // 1. Validation complète
+    if (!validateFinanceForm()) {
+        return; // La fonction validateFinanceForm() a déjà géré l'affichage de l'erreur
     }
 
-    // Ajouter à la base
+    // 2. Récupérer les données APRES validation
+    QString type = ui->financeTypeEdit->text().trimmed();
+    QString description = ui->financeDescriptionEdit->text().trimmed();
+    double montant = ui->financeMontantEdit->text().toDouble();
+    QString projetId = ui->financeProjetIdEdit->text().trimmed();
+    
+    // 3. Ajouter à la base
     Finance f;
     f.setType(type);
     f.setDescription(description);
     f.setMontant(montant);
-    f.setProjet_id(projetId);  // ← CORRECTION ICI : setProjet_id() au lieu de setProjetId()
+    f.setProjet_id(projetId);
     f.setDateOperation(QDate::currentDate().toString("dd/MM/yyyy"));
 
     if (f.ajouter()) {
         QMessageBox::information(this, "Succès", "Opération financière ajoutée avec succès !");
         refreshFinanceTable();
-        // Vider le formulaire
-        ui->financeTypeEdit->clear();
-        ui->financeDescriptionEdit->clear();
-        ui->financeMontantEdit->clear();
-        ui->financeProjetIdEdit->clear();
+        clearFinanceForm();
     } else {
         QMessageBox::critical(this, "Erreur", "Erreur lors de l'ajout: " + QSqlDatabase::database().lastError().text());
     }
 }
 
-
+/**
+ * @brief Supprime l'opération financière sélectionnée.
+ */
 void MainWindow::on_deleteFinanceBtn_clicked()
 {
     QList<QTableWidgetItem*> selected = ui->financeTable->selectedItems();
@@ -1370,7 +1472,7 @@ void MainWindow::on_deleteFinanceBtn_clicked()
     }
 
     int row = ui->financeTable->currentRow();
-    int id = ui->financeTable->item(row, 0)->text().toInt();
+    int id = ui->financeTable->item(row, 0)->text().toInt(); // L'ID est toujours la première colonne
 
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Confirmation",
@@ -1379,9 +1481,7 @@ void MainWindow::on_deleteFinanceBtn_clicked()
 
     if(reply == QMessageBox::Yes) {
         Finance finance;
-        bool test = finance.supprimer(id);
-
-        if(test) {
+        if(finance.supprimer(id)) {
             QMessageBox::information(this, "Succès", "Opération financière supprimée avec succès");
             refreshFinanceTable();
             clearFinanceForm();
@@ -1391,39 +1491,35 @@ void MainWindow::on_deleteFinanceBtn_clicked()
     }
 }
 
+/**
+ * @brief Modifie l'opération financière sélectionnée.
+ * CORRECTION : Ajout du projetId à l'appel de finance.modifier().
+ */
 void MainWindow::on_editFinanceBtn_clicked()
 {
     if(currentFinanceId == -1) {
         QMessageBox::warning(this, "Erreur", "Veuillez sélectionner une opération financière à modifier");
         return;
     }
-
-    // Debug
-    qDebug() << "=== TENTATIVE MODIFICATION ===";
-    qDebug() << "ID sélectionné:" << currentFinanceId;
-    qDebug() << "Type:" << ui->financeTypeEdit->text();
-    qDebug() << "Montant:" << ui->financeMontantEdit->text();
-    qDebug() << "Description:" << ui->financeDescriptionEdit->text();
-    qDebug() << "Projet ID:" << ui->financeProjetIdEdit->text();
-
-    // Récupération des données CORRECTE
-    QString type = ui->financeTypeEdit->text().trimmed();
-    QString description = ui->financeDescriptionEdit->text().trimmed();
-    double montant = ui->financeMontantEdit->text().toDouble();
-    QString projetId = ui->financeProjetIdEdit->text().trimmed(); // Garder en QString
-    QString categorie = "Général"; // Si vous avez un champ catégorie, adaptez
-    QString dateOperation = QDate::currentDate().toString("dd/MM/yyyy");
-
-    // Validation
-    if(type.isEmpty() || description.isEmpty() || montant <= 0) {
-        QMessageBox::warning(this, "Erreur", "Veuillez remplir tous les champs correctement");
+    
+    // Utiliser la validation complète
+    if (!validateFinanceForm()) {
         return;
     }
 
+    // Récupération des données après validation
+    QString type = ui->financeTypeEdit->text().trimmed();
+    QString description = ui->financeDescriptionEdit->text().trimmed();
+    double montant = ui->financeMontantEdit->text().toDouble();
+    QString projetId = ui->financeProjetIdEdit->text().trimmed(); 
+    QString categorie = "Général"; 
+    QString dateOperation = QDate::currentDate().toString("dd/MM/yyyy");
+
     // Utiliser la méthode modifier
     Finance finance;
+    // ASSUMPTION : la signature de modifier a été mise à jour dans la classe Finance
     bool test = finance.modifier(currentFinanceId, type, description, montant,
-                                 dateOperation, categorie);
+                                 dateOperation, categorie, projetId); 
 
     if(test) {
         QMessageBox::information(this, "Succès", "Opération financière modifiée avec succès");
@@ -1431,7 +1527,6 @@ void MainWindow::on_editFinanceBtn_clicked()
         clearFinanceForm();
         currentFinanceId = -1;
 
-        // Réactiver/désactiver les boutons
         ui->editFinanceBtn->setEnabled(false);
         ui->addFinanceBtn->setEnabled(true);
 
@@ -1443,6 +1538,9 @@ void MainWindow::on_editFinanceBtn_clicked()
     }
 }
 
+/**
+ * @brief Recherche les opérations financières.
+ */
 void MainWindow::on_searchFinanceLineEdit_textChanged(const QString &text)
 {
     if(text.isEmpty()) {
@@ -1451,7 +1549,8 @@ void MainWindow::on_searchFinanceLineEdit_textChanged(const QString &text)
     }
 
     QSqlQuery query;
-    query.prepare("SELECT id, type, montant, description, date_operation, projet_id, statut FROM finance "
+    // La requête doit retourner 7 colonnes pour correspondre au QTableWidget
+    query.prepare("SELECT id, type, montant, date_operation, description, projet_id, statut FROM finance "
                   "WHERE type LIKE :search OR description LIKE :search");
     query.bindValue(":search", "%" + text + "%");
 
@@ -1460,27 +1559,36 @@ void MainWindow::on_searchFinanceLineEdit_textChanged(const QString &text)
         int row = 0;
         while (query.next()) {
             ui->financeTable->insertRow(row);
-            ui->financeTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString()));
-            ui->financeTable->setItem(row, 1, new QTableWidgetItem(query.value(1).toString()));
-            ui->financeTable->setItem(row, 2, new QTableWidgetItem(query.value(2).toString()));
-            ui->financeTable->setItem(row, 3, new QTableWidgetItem(query.value(3).toString()));
-            ui->financeTable->setItem(row, 4, new QTableWidgetItem(query.value(4).toString()));
-            ui->financeTable->setItem(row, 5, new QTableWidgetItem(query.value(5).toString()));
-            ui->financeTable->setItem(row, 6, new QTableWidgetItem(query.value(6).toString()));
+            // CORRECTION: Attention à l'ordre des colonnes ici : la description et la date ont été inversées
+            // Si la requête est: SELECT id, type, montant, date_operation, description, projet_id, statut
+            ui->financeTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString())); // ID
+            ui->financeTable->setItem(row, 1, new QTableWidgetItem(query.value(1).toString())); // Type
+            ui->financeTable->setItem(row, 2, new QTableWidgetItem(query.value(2).toString())); // Montant
+            ui->financeTable->setItem(row, 3, new QTableWidgetItem(query.value(3).toString())); // Date
+            ui->financeTable->setItem(row, 4, new QTableWidgetItem(query.value(4).toString())); // Description
+            ui->financeTable->setItem(row, 5, new QTableWidgetItem(query.value(5).toString())); // Projet ID
+            ui->financeTable->setItem(row, 6, new QTableWidgetItem(query.value(6).toString())); // Statut
             row++;
         }
     }
 }
 
+/**
+ * @brief Charge les données de l'opération sélectionnée dans le formulaire.
+ */
 void MainWindow::on_financeTable_itemClicked(QTableWidgetItem *item)
 {
     int row = item->row();
 
     currentFinanceId = ui->financeTable->item(row, 0)->text().toInt();
-    ui->financeTypeEdit->setText(ui->financeTable->item(row, 1)->text());
+    
+    // Le mapping des colonnes doit correspondre aux en-têtes et à l'ordre affiché dans la table
+    ui->financeTypeEdit->setText(ui->financeTable->item(row, 1)->text()); 
     ui->financeMontantEdit->setText(ui->financeTable->item(row, 2)->text());
-    ui->financeDescriptionEdit->setText(ui->financeTable->item(row, 3)->text());
+    // Note: La date est en colonne 3, la description en 4.
+    ui->financeDescriptionEdit->setText(ui->financeTable->item(row, 4)->text()); 
     ui->financeProjetIdEdit->setText(ui->financeTable->item(row, 5)->text());
+    
     ui->selectedFinanceIdLabel->setText(QString::number(currentFinanceId));
 
     // Activer le bouton modifier et désactiver le bouton ajouter
@@ -1488,30 +1596,39 @@ void MainWindow::on_financeTable_itemClicked(QTableWidgetItem *item)
     ui->addFinanceBtn->setEnabled(false);
 }
 
+/**
+ * @brief Vide le formulaire financier.
+ */
 void MainWindow::on_clearFinanceFormBtn_clicked()
 {
     clearFinanceForm();
 }
 
+/**
+ * @brief Rafraîchit le tableau financier.
+ */
 void MainWindow::on_refreshFinanceTableBtn_clicked()
 {
     refreshFinanceTable();
 }
+
+/**
+ * @brief Ouvre la boîte de dialogue des alertes de retard.
+ */
 void MainWindow::on_actionAlerteRetard_triggered()
 {
-    // On crée une instance de la boîte de dialogue Alerte
     AlerteRetardDialog *alerteDialog = new AlerteRetardDialog(this);
-    // On l'affiche de manière modale (bloque la fenêtre principale)
-    alerteDialog->exec(); 
-    // Ou alerteDialog->show() si vous préférez un affichage non modal
+    alerteDialog->exec();    
 }
 
+/**
+ * @brief Ouvre la boîte de dialogue de l'historique.
+ */
 void MainWindow::on_actionHistorique_triggered()
 {
     HistoriqueDialog *historiqueDialog = new HistoriqueDialog(this);
     historiqueDialog->exec();
 }
-
 // ============================================================================
 // GESTION equipement
 // ============================================================================
