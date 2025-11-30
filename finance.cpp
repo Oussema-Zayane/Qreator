@@ -1,12 +1,17 @@
-#include "Finance.h" // Inclure l'en-tête de la classe renommée
-#include "connection.h" // Assurez-vous que cette connexion est toujours valide
+#include "Finance.h" 
+#include "connection.h" // Nécessaire pour l'accès à la connexion
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
 #include <QVariant>
 #include <QObject>
+#include <QSqlRecord> // Ajout pour une meilleure gestion des données
 
-// NOTE : J'ai ajouté 'projet_id' ici. Assurez-vous qu'il est défini dans Finance.h !
+// Nom de la connexion par défaut, établi par le Singleton
+#define CONNECTION_NAME "qt_sql_default_connection" 
+
+// --- Constructeurs et Setters/Getters ---
+
 Finance::Finance()
 {
     id = 0;
@@ -16,13 +21,12 @@ Finance::Finance()
     tva = 0.0;
     modePaiment = "";
     statut = "";
-    projet_id = ""; // <-- AJOUT CRITIQUE
+    projet_id = ""; // Initialisation de PROJET_ID
     delai = QDate::currentDate();
 }
 
-// Constructeur mis à jour pour inclure projet_id
 Finance::Finance(int id, double revenu, double benefices, QDate delai, 
-                 QString modePaiment, QString statut, double depense, QString projetId) // <-- AJOUT CRITIQUE
+                 QString modePaiment, QString statut, double depense, QString projetId)
 {
     this->id = id;
     this->revenu = revenu;
@@ -31,127 +35,56 @@ Finance::Finance(int id, double revenu, double benefices, QDate delai,
     this->modePaiment = modePaiment;
     this->statut = statut;
     this->depense = depense;
-    this->projet_id = projetId; // <-- AJOUT CRITIQUE
+    this->projet_id = projetId; // Attribution de PROJET_ID
 }
 
 // Getters
-int Finance::getId() const
-{
-    return id;
-}
-
-double Finance::getRevenu() const
-{
-    return revenu;
-}
-
-double Finance::getBenefices() const
-{
-    return benefices;
-}
-
-QDate Finance::getDelai() const
-{
-    return delai;
-}
-
-QString Finance::getModePaiment() const
-{
-    return modePaiment;
-}
-
-QString Finance::getStatut() const
-{
-    return statut;
-}
-
-double Finance::getDepense() const
-{
-    return depense;
-}
-
-double Finance::getTva() const
-{
-    return tva;
-}
-
-// Getter pour projet_id
-QString Finance::getProjet_id() const
-{
-    return projet_id;
-}
+int Finance::getId() const { return id; }
+double Finance::getRevenu() const { return revenu; }
+double Finance::getBenefices() const { return benefices; }
+QDate Finance::getDelai() const { return delai; }
+QString Finance::getModePaiment() const { return modePaiment; }
+QString Finance::getStatut() const { return statut; }
+double Finance::getDepense() const { return depense; }
+double Finance::getTva() const { return tva; }
+QString Finance::getProjet_id() const { return projet_id; }
 
 // Setters
-void Finance::setId(int id)
-{
-    this->id = id;
-}
-
-void Finance::setRevenu(double revenu)
-{
-    this->revenu = revenu;
-}
-
-void Finance::setBenefices(double benefices)
-{
-    this->benefices = benefices;
-}
-
-void Finance::setDelai(QDate delai)
-{
-    this->delai = delai;
-}
-
-void Finance::setModePaiment(QString modePaiment)
-{
-    this->modePaiment = modePaiment;
-}
-
-void Finance::setStatut(QString statut)
-{
-    this->statut = statut;
-}
-
-void Finance::setDepense(double depense)
-{
-    this->depense = depense;
-}
-
-void Finance::setTva(double tva)
-{
-    this->tva = tva;
-}
-
-// Setter pour projet_id
-void Finance::setProjet_id(QString projetId)
-{
-    this->projet_id = projetId;
-}
-
+void Finance::setId(int id) { this->id = id; }
+void Finance::setRevenu(double revenu) { this->revenu = revenu; }
+void Finance::setBenefices(double benefices) { this->benefices = benefices; }
+void Finance::setDelai(QDate delai) { this->delai = delai; }
+void Finance::setModePaiment(QString modePaiment) { this->modePaiment = modePaiment; }
+void Finance::setStatut(QString statut) { this->statut = statut; }
+void Finance::setDepense(double depense) { this->depense = depense; }
+void Finance::setTva(double tva) { this->tva = tva; }
+void Finance::setProjet_id(QString projetId) { this->projet_id = projetId; }
 
 // Calculer les bénéfices (Revenu - Dépense)
 bool Finance::calculerBenefices()
 {
     benefices = revenu - depense;
+    tva = benefices * 0.20; // Calculer la TVA en même temps
     return true;
 }
 
 // --- CRUD Methods ---
 
-// Create - Ajouter un enregistrement
+/**
+ * @brief Ajoute un enregistrement à la table FINANCES.
+ */
 bool Finance::ajouter()
 {
-    QSqlDatabase db = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlDatabase db = QSqlDatabase::database(CONNECTION_NAME);
     if (!db.isOpen()) {
-        qDebug() << "Erreur: La base de données n'est pas ouverte";
+        qDebug() << "Erreur: La base de données n'est pas ouverte.";
         return false;
     }
     
     calculerBenefices();
-    tva = benefices * 0.20;
     
     QSqlQuery query(db);
-    // AJOUT DE PROJET_ID DANS L'INSERT
+    // Requête avec PROJET_ID
     query.prepare("INSERT INTO FINANCES (REVENU, BENEFICES, DELAI, MODEPAIMENT, STATUT, DEPENSE, TVA, PROJET_ID) "
                   "VALUES (:revenu, :benefices, :delai, :modePaiment, :statut, :depense, :tva, :projet_id)");
     
@@ -162,7 +95,7 @@ bool Finance::ajouter()
     query.bindValue(":statut", statut.isEmpty() ? QVariant(QVariant::String) : statut);
     query.bindValue(":depense", depense);
     query.bindValue(":tva", tva);
-    query.bindValue(":projet_id", projet_id); // <-- LIAISON DU PROJET ID
+    query.bindValue(":projet_id", projet_id);
     
     if (query.exec()) {
         qDebug() << "Enregistrement ajouté avec succès";
@@ -173,19 +106,20 @@ bool Finance::ajouter()
     }
 }
 
-// Read - Afficher tous les enregistrements
+/**
+ * @brief Récupère tous les enregistrements de la table FINANCES.
+ */
 QSqlQuery Finance::afficher()
 {
     QSqlQuery query;
-    QSqlDatabase db = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlDatabase db = QSqlDatabase::database(CONNECTION_NAME);
     if (!db.isOpen()) {
-        qDebug() << "Erreur: La base de données n'est pas ouverte";
-        return query;
+        qDebug() << "Erreur: La base de données n'est pas ouverte pour l'affichage.";
+        return query; // Retourne une requête invalide
     }
     
     query = QSqlQuery(db);
-    // AJOUT DE PROJET_ID DANS LE SELECT
-    // Les colonnes seront dans cet ordre: ROWID, REVENU, DEPENSE, BENEFICES, TVA, DATE_ENTREE, DELAI_JOURS, MODEPAIMENT, STATUT, PROJET_ID
+    // Requête avec PROJET_ID
     query.prepare("SELECT ROWID, REVENU, DEPENSE, BENEFICES, TVA, DELAI as DATE_ENTREE, "
                   "ABS(ROUND(SYSDATE - DELAI)) as DELAI_JOURS, MODEPAIMENT, STATUT, PROJET_ID "
                   "FROM FINANCES ORDER BY DELAI DESC");
@@ -197,12 +131,14 @@ QSqlQuery Finance::afficher()
     return query;
 }
 
-// Update - Modifier un enregistrement
+/**
+ * @brief Modifie un enregistrement dans la table FINANCES.
+ */
 bool Finance::modifier(const QString &rowId)
 {
-    QSqlDatabase db = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlDatabase db = QSqlDatabase::database(CONNECTION_NAME);
     if (!db.isOpen()) {
-        qDebug() << "Erreur: La base de données n'est pas ouverte";
+        qDebug() << "Erreur: La base de données n'est pas ouverte pour la modification.";
         return false;
     }
     
@@ -212,10 +148,9 @@ bool Finance::modifier(const QString &rowId)
     }
     
     calculerBenefices();
-    tva = benefices * 0.20;
     
     QSqlQuery query(db);
-    // AJOUT DE PROJET_ID DANS L'UPDATE
+    // Requête de modification avec PROJET_ID
     query.prepare("UPDATE FINANCES SET REVENU=:revenu, BENEFICES=:benefices, DELAI=:delai, "
                   "MODEPAIMENT=:modePaiment, STATUT=:statut, DEPENSE=:depense, TVA=:tva, PROJET_ID=:projet_id WHERE ROWID=CHARTOROWID(:id)");
     
@@ -227,7 +162,7 @@ bool Finance::modifier(const QString &rowId)
     query.bindValue(":statut", statut.isEmpty() ? QVariant(QVariant::String) : statut);
     query.bindValue(":depense", depense);
     query.bindValue(":tva", tva);
-    query.bindValue(":projet_id", projet_id); // <-- LIAISON DU PROJET ID
+    query.bindValue(":projet_id", projet_id);
     
     if (query.exec()) {
         qDebug() << "Enregistrement modifié avec succès";
@@ -238,12 +173,15 @@ bool Finance::modifier(const QString &rowId)
     }
 }
 
-// Sauvegarder dans l'historique avant suppression
+/**
+ * @brief Sauvegarde les données d'une transaction dans l'historique avant suppression.
+ * @note La vérification et la création de la table FINANCES_HISTORIQUE sont faites par Connection::createconnect().
+ */
 bool Finance::sauvegarderDansHistorique(const QString &rowId)
 {
-    QSqlDatabase db = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlDatabase db = QSqlDatabase::database(CONNECTION_NAME);
     if (!db.isOpen()) {
-        qDebug() << "Erreur: La base de données n'est pas ouverte";
+        qDebug() << "Erreur: La base de données n'est pas ouverte pour l'historique.";
         return false;
     }
     
@@ -252,54 +190,9 @@ bool Finance::sauvegarderDansHistorique(const QString &rowId)
         return false;
     }
     
-    // --- Logique de création de table/séquence (LAISSÉE TELLE QUELLE) ---
-    QSqlQuery checkTableQuery(db);
-    checkTableQuery.prepare("SELECT COUNT(*) FROM USER_TABLES WHERE TABLE_NAME = 'FINANCES_HISTORIQUE'");
-    bool tableExists = false;
-    if (checkTableQuery.exec() && checkTableQuery.next()) {
-        tableExists = (checkTableQuery.value(0).toInt() > 0);
-    }
-    
-    if (!tableExists) {
-        QSqlQuery createQuery(db);
-        QString createTableSQL = 
-            "CREATE TABLE FINANCES_HISTORIQUE ("
-            "ID NUMBER PRIMARY KEY,"
-            "REVENU NUMBER(10,2),"
-            "DEPENSE NUMBER(10,2),"
-            "BENEFICES NUMBER(10,2),"
-            "TVA NUMBER(10,2),"
-            "DELAI DATE,"
-            "MODEPAIMENT VARCHAR2(50),"
-            "STATUT VARCHAR2(50),"
-            "PROJET_ID VARCHAR2(50)," // <-- AJOUT CRITIQUE DANS LA TABLE HISTORIQUE
-            "DATE_SUPPRESSION TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-            "ROWID_ORIGINAL VARCHAR2(50))";
-        createQuery.exec(createTableSQL);
-    }
-    
-    QSqlQuery checkSeqQuery(db);
-    checkSeqQuery.prepare("SELECT COUNT(*) FROM USER_SEQUENCES WHERE SEQUENCE_NAME = 'SEQ_FINANCES_HISTORIQUE'");
-    bool sequenceExists = false;
-    if (checkSeqQuery.exec() && checkSeqQuery.next()) {
-        sequenceExists = (checkSeqQuery.value(0).toInt() > 0);
-    }
-    
-    if (!sequenceExists) {
-        QSqlQuery createSeqQuery(db);
-        QString createSeqSQL = "CREATE SEQUENCE SEQ_FINANCES_HISTORIQUE START WITH 1 INCREMENT BY 1";
-        if (!createSeqQuery.exec(createSeqSQL)) {
-            // Logique de vérification/erreur
-        } else {
-            sequenceExists = true;
-        }
-    }
-    // --- FIN Logique de création de table/séquence ---
-
-    
-    // Récupérer les données de la transaction à supprimer (avec PROJET_ID)
+    // 1. Récupérer les données de la transaction à supprimer (avec PROJET_ID)
     QSqlQuery selectQuery(db);
-    selectQuery.prepare("SELECT REVENU, DEPENSE, BENEFICES, TVA, DELAI, MODEPAIMENT, STATUT, PROJET_ID " // <-- AJOUT PROJET_ID
+    selectQuery.prepare("SELECT REVENU, DEPENSE, BENEFICES, TVA, DELAI, MODEPAIMENT, STATUT, PROJET_ID "
                         "FROM FINANCES WHERE ROWID=CHARTOROWID(:id)");
     selectQuery.bindValue(":id", rowId);
     
@@ -308,33 +201,26 @@ bool Finance::sauvegarderDansHistorique(const QString &rowId)
         return false;
     }
     
-    double revenu = selectQuery.value(0).toDouble();
-    double depense = selectQuery.value(1).toDouble();
-    double benefices = selectQuery.value(2).toDouble();
-    double tva = selectQuery.value(3).toDouble();
-    QDate delai = selectQuery.value(4).toDate();
-    QString modePaiment = selectQuery.value(5).toString();
-    QString statut = selectQuery.value(6).toString();
-    QString projetIdOriginal = selectQuery.value(7).toString(); // <-- RÉCUPÉRATION DU PROJET ID
+    QSqlRecord record = selectQuery.record();
     
-    QSqlQuery finalCheckQuery(db);
-    finalCheckQuery.prepare("SELECT COUNT(*) FROM USER_SEQUENCES WHERE SEQUENCE_NAME = 'SEQ_FINANCES_HISTORIQUE'");
-    bool finalSequenceExists = false;
-    if (finalCheckQuery.exec() && finalCheckQuery.next()) {
-        finalSequenceExists = (finalCheckQuery.value(0).toInt() > 0);
+    // 2. Vérifier si la séquence existe (si le Singleton a réussi à la créer)
+    QSqlQuery checkSeqQuery(db);
+    checkSeqQuery.prepare("SELECT COUNT(*) FROM USER_SEQUENCES WHERE SEQUENCE_NAME = 'SEQ_FINANCES_HISTORIQUE'");
+    bool sequenceExists = false;
+    if (checkSeqQuery.exec() && checkSeqQuery.next()) {
+        sequenceExists = (checkSeqQuery.value(0).toInt() > 0);
     }
     
-    // Insérer dans l'historique
+    // 3. Insérer dans l'historique
     QSqlQuery insertQuery(db);
     
-    if (finalSequenceExists) {
-        // AJOUT DE PROJET_ID DANS L'INSERT DE L'HISTORIQUE
+    if (sequenceExists) {
         insertQuery.prepare("INSERT INTO FINANCES_HISTORIQUE (ID, REVENU, DEPENSE, BENEFICES, TVA, DELAI, "
                             "MODEPAIMENT, STATUT, PROJET_ID, ROWID_ORIGINAL) "
                             "VALUES (SEQ_FINANCES_HISTORIQUE.NEXTVAL, :revenu, :depense, :benefices, :tva, "
                             ":delai, :modePaiment, :statut, :projet_id, :rowId)");
     } else {
-        // Logique alternative pour ID
+        // Logique alternative pour ID si la séquence n'a pas pu être créée
         QSqlQuery maxIdQuery(db);
         maxIdQuery.prepare("SELECT NVL(MAX(ID), 0) + 1 FROM FINANCES_HISTORIQUE");
         int nextId = 1;
@@ -342,7 +228,6 @@ bool Finance::sauvegarderDansHistorique(const QString &rowId)
             nextId = maxIdQuery.value(0).toInt();
         }
         
-        // AJOUT DE PROJET_ID DANS L'INSERT DE L'HISTORIQUE
         insertQuery.prepare("INSERT INTO FINANCES_HISTORIQUE (ID, REVENU, DEPENSE, BENEFICES, TVA, DELAI, "
                             "MODEPAIMENT, STATUT, PROJET_ID, ROWID_ORIGINAL) "
                             "VALUES (:id, :revenu, :depense, :benefices, :tva, "
@@ -350,14 +235,15 @@ bool Finance::sauvegarderDansHistorique(const QString &rowId)
         insertQuery.bindValue(":id", nextId);
     }
     
-    insertQuery.bindValue(":revenu", revenu);
-    insertQuery.bindValue(":depense", depense);
-    insertQuery.bindValue(":benefices", benefices);
-    insertQuery.bindValue(":tva", tva);
-    insertQuery.bindValue(":delai", delai);
-    insertQuery.bindValue(":modePaiment", modePaiment.isEmpty() ? QVariant(QVariant::String) : modePaiment);
-    insertQuery.bindValue(":statut", statut.isEmpty() ? QVariant(QVariant::String) : statut);
-    insertQuery.bindValue(":projet_id", projetIdOriginal); // <-- LIAISON DU PROJET ID DANS L'HISTORIQUE
+    // Lier les valeurs
+    insertQuery.bindValue(":revenu", record.value("REVENU"));
+    insertQuery.bindValue(":depense", record.value("DEPENSE"));
+    insertQuery.bindValue(":benefices", record.value("BENEFICES"));
+    insertQuery.bindValue(":tva", record.value("TVA"));
+    insertQuery.bindValue(":delai", record.value("DELAI"));
+    insertQuery.bindValue(":modePaiment", record.value("MODEPAIMENT"));
+    insertQuery.bindValue(":statut", record.value("STATUT"));
+    insertQuery.bindValue(":projet_id", record.value("PROJET_ID"));
     insertQuery.bindValue(":rowId", rowId);
     
     if (insertQuery.exec()) {
@@ -369,12 +255,15 @@ bool Finance::sauvegarderDansHistorique(const QString &rowId)
     }
 }
 
-// Delete - Supprimer un enregistrement
+
+/**
+ * @brief Supprime un enregistrement après l'avoir sauvegardé dans l'historique.
+ */
 bool Finance::supprimer(const QString &rowId)
 {
-    QSqlDatabase db = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlDatabase db = QSqlDatabase::database(CONNECTION_NAME);
     if (!db.isOpen()) {
-        qDebug() << "Erreur: La base de données n'est pas ouverte";
+        qDebug() << "Erreur: La base de données n'est pas ouverte pour la suppression.";
         return false;
     }
     
@@ -402,18 +291,20 @@ bool Finance::supprimer(const QString &rowId)
     }
 }
 
-// Rechercher - Rechercher des enregistrements selon un critère
+/**
+ * @brief Recherche des enregistrements par critère.
+ */
 QSqlQuery Finance::rechercher(QString critere)
 {
     QSqlQuery query;
-    QSqlDatabase db = QSqlDatabase::database("qt_sql_default_connection");
+    QSqlDatabase db = QSqlDatabase::database(CONNECTION_NAME);
     if (!db.isOpen()) {
-        qDebug() << "Erreur: La base de données n'est pas ouverte";
+        qDebug() << "Erreur: La base de données n'est pas ouverte pour la recherche.";
         return query;
     }
     
     query = QSqlQuery(db);
-    // AJOUT DE PROJET_ID DANS LE SELECT et dans la clause WHERE pour la recherche
+    // Requête de recherche avec PROJET_ID
     query.prepare("SELECT ROWID, REVENU, DEPENSE, BENEFICES, TVA, DELAI as DATE_ENTREE, "
                   "ABS(ROUND(SYSDATE - DELAI)) as DELAI_JOURS, MODEPAIMENT, STATUT, PROJET_ID "
                   "FROM FINANCES WHERE "
@@ -422,7 +313,7 @@ QSqlQuery Finance::rechercher(QString critere)
                   "MODEPAIMENT LIKE :critere OR "
                   "STATUT LIKE :critere OR "
                   "DEPENSE LIKE :critere OR "
-                  "PROJET_ID LIKE :critere " // <-- RECHERCHE PAR PROJET ID
+                  "PROJET_ID LIKE :critere "
                   "ORDER BY DELAI DESC");
     
     QString searchPattern = "%" + critere + "%";
