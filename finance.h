@@ -15,13 +15,21 @@ private:
     double montant;
     QString dateOperation;
     QString categorie;
-    QString projet_id; // Ajout du membre manquant
+    QString projet_id; // Identifiant du projet lié
+    QString statut; // Ajout possible si vous utilisez un statut pour les finances (ex: "payé", "en attente")
 
 public:
+    // ====================================================================
+    // CONSTRUCTEURS
+    // ====================================================================
     Finance();
-    Finance(int id, QString type, QString description, double montant, QString dateOperation, QString categorie);
+    // Constructeur avec tous les champs
+    Finance(int id, QString type, QString description, double montant, 
+            QString dateOperation, QString categorie, QString projet_id, QString statut = "Payé"); 
 
-    // Getters
+    // ====================================================================
+    // GETTERS
+    // ====================================================================
     int getId() const { return id; }
     QString getType() const { return type; }
     QString getDescription() const { return description; }
@@ -29,8 +37,11 @@ public:
     QString getDateOperation() const { return dateOperation; }
     QString getCategorie() const { return categorie; }
     QString getProjet_id() const { return projet_id; }
+    QString getStatut() const { return statut; }
 
-    // Setters
+    // ====================================================================
+    // SETTERS
+    // ====================================================================
     void setId(int id) { this->id = id; }
     void setType(QString type) { this->type = type; }
     void setDescription(QString desc) { description = desc; }
@@ -38,15 +49,26 @@ public:
     void setDateOperation(QString date) { dateOperation = date; }
     void setCategorie(QString categorie) { this->categorie = categorie; }
     void setProjet_id(QString projetId) { projet_id = projetId; }
+    void setStatut(QString statut) { this->statut = statut; }
 
-    // CRUD
+    // ====================================================================
+    // MÉTHODES CRUD
+    // ====================================================================
     bool ajouter();
     bool supprimer(int id);
     QSqlQueryModel* afficher();
-    bool modifier(int id, QString type, QString description, double montant, QString dateOperation, QString categorie);
-    bool modifier(); // Ajout de la méthode sans paramètres
+    
+    /**
+     * @brief Modifie une opération financière existante.
+     * @param id : ID de l'opération à modifier.
+     * @param projet_id : ID du projet lié (AJOUT CRITIQUE).
+     */
+    bool modifier(int id, QString type, QString description, double montant, 
+                  QString dateOperation, QString categorie, QString projet_id); 
 
-    // Statistiques
+    // ====================================================================
+    // STATISTIQUES
+    // ====================================================================
     static double getTotalRevenus();
     static double getTotalDepenses();
     static double getBenefices();
