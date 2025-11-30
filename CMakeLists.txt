@@ -34,6 +34,10 @@ set(PROJECT_SOURCES
     pdfexporter.h
     emailsmtpmanager.h
     emailsmtpmanager.cpp
+    alerteretarddialog.h
+    alerteretarddialog.cpp
+    historiquedialog.h
+    historiquedialog.cpp
 
 
 
