@@ -1,0 +1,27 @@
+# ninja log v6
+28	1621	7866717483422493	sans_titre_autogen/timestamp	34d681f159b26015
+983	4084	7865914492936187	CMakeFiles/sans_titre.dir/pdfexporter.cpp.obj	8fa8746ad1bd6634
+28	1621	7866717483422493	sans_titre_autogen/mocs_compilation.cpp	34d681f159b26015
+28	1621	7866717483422493	C:/Users/MSI/Documents/sans_titre/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/sans_titre_autogen/timestamp	34d681f159b26015
+970	3636	7865914492806204	CMakeFiles/sans_titre.dir/employe.cpp.obj	1359b4905b095b88
+967	3120	7865914492776254	CMakeFiles/sans_titre.dir/client.cpp.obj	ef6dce5f2d7ad6df
+973	3584	7865914492837196	CMakeFiles/sans_titre.dir/projet.cpp.obj	c8234939dea0590a
+28	1621	7866717483422493	C:/Users/MSI/Documents/sans_titre/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/sans_titre_autogen/mocs_compilation.cpp	34d681f159b26015
+964	2983	7865914492746213	CMakeFiles/sans_titre.dir/connection.cpp.obj	8d496b1e46357f38
+980	4534	7865914492896170	CMakeFiles/sans_titre.dir/equipement.cpp.obj	bcdfb1d135cf7ee5
+976	3592	7865914492866231	CMakeFiles/sans_titre.dir/finance.cpp.obj	743d2addc870d8ca
+1627	7480	7866717484914840	CMakeFiles/sans_titre.dir/main.cpp.obj	a463c117ac31b982
+1622	7513	7866717484863679	CMakeFiles/sans_titre.dir/sans_titre_autogen/mocs_compilation.cpp.obj	fedcefdf341a7029
+1632	9577	7866717484953672	CMakeFiles/sans_titre.dir/mainwindow.cpp.obj	44823b1315db1b44
+1640	7507	7866717485033678	CMakeFiles/sans_titre.dir/chatbotdialog.cpp.obj	ab0f61c710fa879c
+9578	13431	7866717564417070	sans_titre.exe	b97706a7b34a0115
+1418	3641	7848440051310235	CMakeFiles/sans_titre.dir/emailmanager.cpp.obj	56ba888bca43e32d
+87	994	7865882773786554	build.ninja	1f71f81b88cb436e
+449	1976	7847881089375828	CMakeFiles/sans_titre.dir/emailwidget.cpp.obj	72369156ccf878dd
+231	1575	7849161951855601	CMakeFiles/sans_titre.dir/sendgridmanager.cpp.obj	f04b53cc40350935
+257	1575	7849184061838290	CMakeFiles/sans_titre.dir/emailjsmanager.cpp.obj	6573304da10183a2
+986	3362	7865914492966163	CMakeFiles/sans_titre.dir/emailsmtpmanager.cpp.obj	3d9511bd4c8716fc
+785	3068	7857836375904830	CMakeFiles/sans_titre.dir/circularchart.cpp.obj	733a109d0978f704
+60	124	7865914461687545	CMakeFiles/clean.additional	baedbe210acaa455
+124	144	7865914462320222	clean	577b940aee94fbd7
+1636	7510	7866717484993687	CMakeFiles/sans_titre.dir/rfidmanager.cpp.obj	b9c585189a36d2e2
